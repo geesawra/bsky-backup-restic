@@ -37,8 +37,23 @@ jobs:
         ./run.sh
     - name: Setup Restic
       uses: AnimMouse/setup-restic@v1
+    - name: Restic repo check
+      run: restic check --read-data-subset=10%
+      env:
+        RESTIC_REPOSITORY: ${{ secrets.RESTIC_REPOSITORY }}
+        RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
     - name: Push to Restic repo
       run: restic backup --tag pds-car ./car_files
+      env:
+        RESTIC_REPOSITORY: ${{ secrets.RESTIC_REPOSITORY }}
+        RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
+    - name: Forget old files
+      run: restic forget --keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12
+      env:
+        RESTIC_REPOSITORY: ${{ secrets.RESTIC_REPOSITORY }}
+        RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
+    - name: Prune repo
+      run: restic prune
       env:
         RESTIC_REPOSITORY: ${{ secrets.RESTIC_REPOSITORY }}
         RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
