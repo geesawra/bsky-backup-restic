@@ -38,15 +38,7 @@ jobs:
     - name: Setup Restic
       uses: AnimMouse/setup-restic@v1
     - name: Push to Restic repo
-      run: restic backup
+      run: restic backup --tag pds-car --keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12 ./car_files
       env:
         RESTIC_REPOSITORY: ${{ secrets.RESTIC_REPOSITORY }}
         RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
-        RESTIC_BACKUP_SOURCES: ./car_files
-        RESTIC_BACKUP_ARGS: |
-          --tag pds
-        RESTIC_FORGET_ARGS: |
-          --keep-last 10
-          --keep-daily 7
-          --keep-weekly 5
-          --keep-monthly 12
