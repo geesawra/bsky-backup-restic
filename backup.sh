@@ -7,9 +7,12 @@ goat() {
 
 ACCOUNT="${1#@}"
 
+mkdir car_files
+pushd car_files
 rm -f "$ACCOUNT".car
 goat repo export -o "$ACCOUNT".car "$ACCOUNT"
 goat blob export "$ACCOUNT"
 goat resolve "$ACCOUNT" > "$ACCOUNT".json
 goat plc data "$ACCOUNT" > "$ACCOUNT"_plc.json
 goat plc history "$ACCOUNT" > "$ACCOUNT"_plc_history.jsonc
+popd

@@ -35,11 +35,18 @@ jobs:
     - name: Run the scraper
       run: |
         ./run.sh
-    - name: Commit and push
-      run: |-
-        git config user.name "Automated"
-        git config user.email "actions@users.noreply.github.com"
-        git add -A
-        git commit -m "$(date -u)" || exit 0
-        git pull --rebase
-        git push
+    - name: Setup Restic
+      uses: AnimMouse/setup-restic@v1
+    - name: Push to Restic repo
+      run: restic backup
+      env:
+        RESTIC_REPOSITORY: ${{ secrets.RESTIC_REPOSITORY }}
+        RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
+        RESTIC_BACKUP_SOURCES: ./car_files
+        RESTIC_BACKUP_ARGS: |
+          --tag pds
+        RESTIC_FORGET_ARGS: |
+          --keep-last 10
+          --keep-daily 7
+          --keep-weekly 5
+          --keep-monthly 12
